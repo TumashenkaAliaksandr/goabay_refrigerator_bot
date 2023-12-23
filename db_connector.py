@@ -31,7 +31,15 @@ class DatabaseConnector:
         self.cursor.execute('SELECT * FROM messages')
         return self.cursor.fetchall()
 
+    def is_github_link(self, link):
+        return link.startswith('https://github.com/') or link.startswith('http://github.com/') or link.startswith(
+            'github.com/')
+
     def add_link(self, link):
+        if self.is_github_link(link):
+            print(f"GitHub link '{link}' excluded from the database")
+            return
+
         # Проверяем, есть ли уже такая ссылка в базе данных
         self.cursor.execute('SELECT link FROM links WHERE link = ?', (link,))
         existing_link = self.cursor.fetchone()
